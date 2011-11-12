@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="stylesheet.css">
+<script type="text/javascript" src="/scripts/prototypes.js"></script>
+<script type="text/javascript">
+	String.prototype.pluralize = function(val) {
+		if (val == 1) {
+			return val + " " + this;
+		} else if (val == 0 || val >= 2) {
+			return val + " " + this + "s";
+		}
+	}
+	
+	window.addEventListener("scroll", function(e) {
+		// TODO: Saner way of handling the menu without specifying absolute values.
+		var perc = window.pageYOffset / (document.body.scrollHeight - window.innerHeight);
+		
+		if ( perc > 0.6 ) {
+			// update the read state, too
+			opera.extension.postMessage({clearButton: true});
+		}
+		// Also make the toolbar floatable.
+		var tabStrip = document.getElementById("tabstrip");
+
+		if ( perc > 0.05) {
+			tabStrip.style.position = "fixed";
+		} else {
+			tabStrip.style.position = "relative";
+			tabStrip.style.posTop = 0;
+			tabStrip.style.posLeft = 0;
+		}
+		
+		
+	}, false); 
+	
+	function showcontainer(container) { 
+		var xpr = document.evaluate("div[@class = \"container\"]", document.body, null, 7, null);
+		opera.postError(xpr.snapshotItem(0).id);
+	}
+	function openInTab(e) {
+		opera.extension.postMessage({action: {what: "goto", where: e.href}});
+	}
+	window.addEventListener("load", function(e) {
+		function datetime(tstamp) {
+			var ctime = new Date();
+			this.timestamp = tstamp-10800;
+			this.now       = ctime.valueOf()/1000;
+			this.since = function() {
+				var delta = (this.now - this.timestamp);
+				if (delta >= 0 && delta <= 10) {
+					return "Just now";
+				} else if (delta < 60 && delta > 10) {
+					var val = Math.round(delta/60).toString();
+					return "second".pluralize(val)
+				} else if (delta < 3600 && delta > 59) {
+					var val = Math.round(delta/60).toString();
+					return "minute".pluralize(val);
+				} else if (delta < 86400 && delta > 3599) {
+					var val = Math.round(delta/3600).toString();
+					return "hour".pluralize(val);
+				}
+				return delta;
+			}
+		}
+
+		var output = document.getElementById("latestposts");
+		var data = JSON.parse(widget.preferences.latestposts);
+		
+		if (data != []) {
+			var tzoff = Number(data.tzoff);
+			data = data.posts.sort(function(a, b) { return Number(b.id) - Number(a.id); });
+			for (var i = 0; i < data.length-1; i++) {
+				if (data[i] == undefined) { continue; }
+				
+				var post = data[i];
+				var time = new datetime(Number(post.date)+tzoff);
+				var div = document.createElement("div");
+				
+				div.innerHTML = "<span class='title'><a href='http://jul.rustedlogic.net/thread.php?pid="+post.id+"&r=1#"+post.id+"'>"+post.title+"</a></span><br><span class='user'><a href='http://jul.rustedlogic.net/profile.php?id="+post.user+"' style='color: #"+post.ucolor+"'>"+post.uname+"</a></span> -- <span class='date'>"+(time.since())+" ago</span>";
+				div.className = "postbit";
+				
+				div.addEventListener("click", function(e) {
+					if (e.target.nodeName == "A") {
+						e.preventDefault();
+						opera.extension.postMessage({action: {what: "goto", where: e.target.href}});
+					} else {
+						opera.extension.postMessage({action: {what: "goto", where: this.childNodes[0].childNodes[0].href}});
+					}
+				}, false);
+				
+				output.appendChild(div);
+			}
+		} else {
+			output.innerHTML = "Huh, there seem to be no new posts, lately.  Or something broke horribly.";
+		}	
+		var updateSpan = document.getElementById("nextupdatetime");
+	}, false);
+</script>
+<meta charset="utf-8"></head>
+	<body><div id="latestposts" class="container"></div><div id="favorites" class="container"></div></body>
+</html>

@@ -1,0 +1,84 @@
+/*
+<div id="posts" data-lastpostid="361466">
+  <div data-postid="361463" class="postbit">
+	<span class="title" data-fulltitle="July JCS Rankings (7/15 - More accursed ties. Everyone lumped in there.)">
+	  <a href="http://jul.rustedlogic.net/thread.php?pid=361463&r=1#361463">July JCS Rankings (7/15 - More accursed ties. Ev...</a>
+	</span>
+	<br>
+	<span class="meta">
+		<span class="user">
+		  <a href="http://jul.rustedlogic.net/profile.php?id=2019" style="color: #97ACEF">pacman1755</a>
+		</span>
+		 -- 
+		<span class="date">-2.8399999141693115 ago</span>
+	</span>
+  </div>
+  <div data-postid="361461" class="postbit">
+  [...]
+*/
+
+body
+	{ background: url('starsbg.png') #000000;
+	color: #FFFFFF;
+	font: 12px/1.6 Verdana, Arial, sans-serif; }
+
+hr { border: 1px dotted #302048; border-width: 0 0 1px 0; }
+
+a:link,a:visited,a:active,a:hover{text-decoration:none;font-weight:bold}
+a {color: #BEBAFE; }
+a:visited {color: #9990c0; }
+a:active {color: #CFBEFF; }
+a:hover {color: #CECAFE; }
+
+a.button 
+	{ margin: auto;
+	background: -o-linear-gradient(#A08, #704);
+	padding: 4px;
+	color: #FFF;
+	text-shadow: 1px -1px 1px #000, -1px 1px 1px #000;
+	border-radius: 6px;
+	float: right; }
+
+.container { margin: 32px; }
+
+.postbit[data-recent] { background-image: -o-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.05)); }
+.postbit
+	{ display: block; clear: both; margin: 0; padding: 16px; }
+	.postbit:hover {-o-transition-property: background-color; -o-transition-duration: 0.5s;}
+	.postbit:nth-child(even) { background-color: #111133; }
+	.postbit:nth-child(odd) { background-color: #11112B; }
+	.postbit:nth-child(even):hover { background-color: #2F2F5F; }
+	.postbit:nth-child(odd):hover { background-color: #302048; }
+	
+	.postbit .title { font-size: 16px; }
+	.postbit .meta { font-size: 12px; margin-left: 32px; }
+
+#tooltip 
+	{ background-color: rgba(0,0,0,0.6);
+	border-radius: 6px;
+	box-shadow:0 0 4px black;
+	position: fixed;
+	z-index: 14;
+	padding: 6px;
+	font-size: 16px;
+	display: none;
+	max-width: 320px; }
+
+@media handheld, screen and (max-width: 640px) {
+	.container { margin: 16px }
+	.postbit .title { font-size: 14px; }
+	.postbit .meta { font-size: 12px; margin-left: 16px; }
+}
+
+@media screen and (min-width: 960px) {
+	#posts { columns: 2; column-gap: 16px;}
+	#posts .postbit { break-inside: avoid; }
+}
+
+@media screen and (min-width: 1280px) {
+	#posts { columns: 3; column-gap: 16px;}
+}
+
+@media screen and (min-width: 1920px) {
+	#posts { columns: 4; column-gap: 16px;}
+}

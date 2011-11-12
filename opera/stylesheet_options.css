@@ -1,0 +1,15 @@
+html { background-color: #DDD; color: black; height: 100%; }
+body { font-family: sans-serif; margin: 16px auto; width: 640px; border: 1px solid #AAA; border-width: 1px 1px 0 1px; border-radius: 8px 8px 0 0; background: #FFF; padding: 8px; height: 100%; box-shadow: 0 -1px 4px #888;}
+h1 { font-family: 'arial black', sans-serif; padding: 0; margin: 0; font-size: 24px; vertical-align: baseline; }
+hr { box-shadow: 0 0 1px #EEE, 1px -1px 2px #EEE; color: #EEE; height: 2px; border: 1px solid #EEE; background-color: #CCC; }
+center { text-shadow: -1px 1px 2px #eee, 1px -1px 2px #EEE; font-size: 24px;}
+
+.major-option { padding: 8px 4px 8px 4px; }
+.major-option:hover { background-image: -o-linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.05)); border-radius: 4px; }
+.major-option label { font-size: 16px; font-weight: bold; border-left: 2px solid #CCC; padding: 0 0 0 8px; }
+.major-option input { height: 100%; display: block; width: 85px; float: left; }
+.major-option br { clear: both; }
+
+
+#help { display: none; position: fixed; width: 420px; overflow: hidden; padding: 8px; box-sizing: border-box; color: white; border: 2px solid #000; border-radius: 4px; background-color: rgba(0,0,0,0.7); box-shadow: 1px 1px 2px #000; clear: both; float: left;  }
+#help>div { overflow: visible; }

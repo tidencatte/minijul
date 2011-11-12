@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Latest Posts / Favorites</title>
+		<link rel="stylesheet" href="/stylesheet_latestposts.css">
+		<script type="text/javascript" src="/scripts/prototypes.js"></script>
+	</head>
+	<body>
+	<div class="container">
+		<h1>Latest Posts</h1><!-- <a class="button">Mark all posts as read</a> -->
+		<!-- posts go down there -->
+		<hr class="stopflowing">
+		<div id="posts" data-lastpostid="0"></div>
+	</div>
+	
+		<!-- <div class="container">
+		<h1>Favorites</h1>
+		<hr>
+		<div id="favorites"></div>
+	</div> -->
+	<div id="tooltip"></div>
+	<script type="text/javascript">
+		function datetime(tstamp) {
+			this.now       = Date.now()/1000;
+			this.timestamp = tstamp;
+			this.since = function() {
+				var delta = (this.now - this.timestamp);
+				if (delta >= 0 && delta <= 10) {
+					return "Just now";
+				} else if (delta < 60 && delta > 10) {
+					var val = Math.round(delta/60).toString();
+					return "second".pluralize(val)
+				} else if (delta < 3600 && delta > 59) {
+					var val = Math.round(delta/60).toString();
+					return "minute".pluralize(val);
+				} else if (delta < 86400 && delta > 3599) {
+					var val = Math.round(delta/3600).toString();
+					return "hour".pluralize(val);
+				} else {
+					return "Some time";
+				}
+				return delta;
+			}
+			
+		}
+	
+		window.addEventListener("storage", function(e) {
+			refreshposts();
+			renderposts();
+		}, false);
+
+		function refreshposts() {
+			var postsList = document.getElementById("posts");
+			var posts     = postsList.querySelectorAll("div[data-postid]");
+			
+			for (var i = 0; i < posts.length; i++) {
+				postsList.removeChild(posts[i]);
+			}
+		}
+			
+		function renderposts() {
+			var data = JSON.parse(widget.preferences.latestposts);
+			var output = document.getElementById("posts");
+
+			if (data != []) {
+				var tzoff = Number(data.tzoff);
+				
+				data = data.posts.sort(function(a, b) { return Number(b.id) - Number(a.id); });
+				var posts = [];
+				for (var i = 0; i < data.length-1; i++) {
+				
+					if (data[i] == undefined) { continue; }
+					
+					var post = data[i];
+					var time = new datetime(Number(post.date)+tzoff);
+					var div = document.createElement("div");
+					div.dataset.postid = data[i].id;
+					var fulltitle = post.title.length > 45 ? "data-fulltitle='"+post.title.replace("'","&apos;")+"'" : "";
+					div.innerHTML = "<span class=\"title\" "+fulltitle+"><a href=\"http://jul.rustedlogic.net/thread.php?pid="+post.id+"&raw=1#"+post.id+"\">"+(post.title.length > 45 ? post.title.slice(0,48)+"..." : post.title)+"</a></span><br><span class=\"meta\"></span><span class=\"user\"><a href=\"http://jul.rustedlogic.net/profile.php?id="+post.user+"\" style=\"color: #"+post.ucolor+"\">"+post.uname+"</a></span> -- <span class=\"date\" data-timestamp=\""+time+"\">"+(time.since())+" ago</span></span>";
+					div.className = "postbit";
+					
+					div.addEventListener("click", function(e) {
+						if (e.target.nodeName == "A") {
+							e.preventDefault();
+							opera.extension.postMessage({action: {what: "goto", where: e.target.href}});
+						} else {
+							opera.extension.postMessage({action: {what: "goto", where: this.childNodes[0].childNodes[0].href}});
+						}
+					}, false);
+					
+					div.addEventListener("mouseenter", function(e) {
+						if (e.currentTarget.querySelector("span[data-fulltitle]") == null) {
+							return;
+						}
+						var tooltip = document.getElementById("tooltip");
+						tooltip.innerHTML = e.currentTarget.querySelector("span[data-fulltitle]").dataset.fulltitle;
+						tooltip.style.display = "block";
+					}, false);
+					
+					div.addEventListener("mousemove", function(e) {
+						var tooltip = document.getElementById("tooltip");
+						if (e.x < tooltip.clientWidth) {
+							tooltip.style.posLeft = e.x;
+						} else {
+							tooltip.style.posLeft = e.x-(tooltip.clientWidth/2);
+						}
+						tooltip.style.posTop  = e.y-(tooltip.clientHeight+4);
+					}, true);
+					
+					div.addEventListener("mouseleave", function(e) {
+						var tooltip = document.getElementById("tooltip");
+						tooltip.style.display="none";
+					}, false);
+					output.appendChild(div);
+				}
+				output.dataset.lastpostid=data[0].id;
+			} else {
+				output.innerHTML = "Huh, there seem to be no new posts, lately.  Or something broke horribly.";
+			}
+		}
+		function renderfavorites() {
+			var favs = JSON.parse(localStorage["favorites"]);
+			var favbox = document.getElementById("favorites");
+			var list = document.createElement("ul");
+			for (var i = 0; i < favs.length; i++) {
+				var div = document.createElement("li");
+				div.innerHTML = "<span class='title'><a href='http://jul.rustedlogic.net/thread.php?id="+favs[i].id+"'>"+favs[i].title+"</a></span>";
+				list.appendChild(div);
+			}
+			favbox.appendChild(list);
+		}
+		//renderfavorites();
+			renderposts();
+			refreshposts();
+	</script>
+	</body>
+</html>

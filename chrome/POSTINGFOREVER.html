@@ -1,0 +1,78 @@
+<html>
+	<script src="/scripts/prototypes.js"></script>
+	<script>
+		var postupdateinterval = 0;
+		if (!(localStorage["firstrun"] == "true")) {
+			// set up a bunch of default values so shit doesn't hit the fan
+			localStorage["latestposts_highid"] = "0";
+			localStorage["latestposts_newposts"] = "0";
+			localStorage["latestposts"] == "";
+		}
+			
+		function newPosts(newposts) {
+			var np = Number(localStorage["latestposts_newposts"])+newposts;
+			if (newposts > 0) {
+				chrome.browserAction.setBadgeText({text: String(np)});
+				localStorage["latestposts_newposts"] = String(np);
+			}
+		}
+		function updateLatestPosts() {
+			var req = new XMLHttpRequest();
+			req.open("GET", "http://jul.rustedlogic.net/latestposts.php?raw=1&lastid="+localStorage["latestposts_highid"], false);
+			try {
+				var data = JSON.parse(localStorage["latestposts"]);
+			} catch(e) {
+				var data = {"tzoff": "", "posts": []};
+			}
+			var newposts = 0;
+			
+			req.onreadystatechange = function() {
+				if (req.readyState == 4) {
+					if (req.status == 200) {
+						// do all the fun processing shit here.
+						var newData = JSON.parse(this.responseText);
+						var maxid   = Number(localStorage["latestposts_highid"]);
+
+						if (newData.posts.length) {
+							if (data != []) {
+								for (var i = 0; i < newData.posts.length; i++) {
+									data.posts.unshift(newData.posts[i]);
+								}
+							} else {
+								data = newData;
+							}
+							data.posts = data.posts.slice(0,50).pset("id");
+							data.tzoff = newData.tzoff;
+							data = JSON.stringify(data);
+
+							localStorage["latestposts"] = data;
+							
+							newposts = newData.posts.filter(function(e) { return Number(e.id) > maxid; }).length;
+							newData.posts = newData.posts.sort(function(a,b) {return Number(a.id) > Number(b.id);});
+							maxid    = newData.posts.map(function(a) { return Number(a.id); })[0];
+							localStorage["latestposts_highid"] = String(maxid);
+							newPosts(newposts);
+						}
+					}
+				}
+			}
+			req.send();
+		}
+		chrome.extension.onRequest.addListener(function(req, sender, sendResponse) {
+			if (req.clearButton) {
+				chrome.browserAction.setBadgeText({text: ""});
+				localStorage["latestposts_newposts"] = "0";
+			}
+			
+			if (req.action) {
+				var action = req.action;
+				if (action.what == "goto") {
+					chrome.tabs.getSelected(null, function(currentTab) {
+						chrome.tabs.update(currentTab.id, {url: action.where, selected: true});
+					});
+				}
+			}
+		});
+		postupdateinterval = setInterval(updateLatestPosts, 30000);
+	</script>
+</html>

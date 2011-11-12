@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Options</title>
+		<link rel="stylesheet" href="stylesheet_options.css">
+
+	</head>
+	<body>
+		<h1>OPTIONS</h1>
+		<hr>
+		<div class='major-option'><input type="checkbox" name="compact_mode" value="1">
+		<label for="compact_mode">Compact Mode</label> - <a class="click4help" data-helpitem="compact">[?]</a></div>
+		
+		<!-- <div class="major-option"><input type="checkbox" name="highlight_threads" value="1">
+		<label for="highlight_threads">Highlight Threads</label> - <a class="click4help" data-helpitem="highlight">[?]</a></div> -->
+		<!--
+		<hr>
+		<h1>Thread Highlighting Options</h1>
+		<div class="major-option"><input type="color" name="thread_highlight_veryrecent" value="0">
+		<label for="thread_highlight_veryrecent">Very recent post</label><br>
+		<input type="color" name="thread_highlight_recent" value="0">
+		<label for="thread_highlight_recent" value="0">Recent post</label><br>
+		<input type="color" name="thread_highlight_hot_veryrecent" value="0">
+		<label for="thread_highlight_hot_veryrecent">Very recent post in fast-moving thread</label><br></div>-->
+		<div id="help"><div><a style="float: right;" onclick="javascript:clr();"></a><div></div></div></div>
+		<script type="text/javascript">
+			var helpitems = {compact: "Enables/disables compact mode.<br><br>Instead of opening the popup upon clicking the toolbar button. A full-sized page (with ~LIVE REFRESHING~*) will be opened instead.<br><br>(* to be added at a later date :D)", highlight: "Enables/disables highlighting threads based on the time the last post was made.<br>See the thread highlighting options for more options"};
+			
+			function clr() {
+				var helper = document.getElementById("help");
+				helper.style.display = "none";
+			}
+			document.addEventListener("click", function(e) {
+				if (help.style.display == "block" && e.target.className != "click4help") {
+					help.style.display = "none"
+				}
+			}, false);
+			document.addEventListener("DOMContentLoaded", function(e) {
+				var storage = widget.preferences;
+				var inputs = document.querySelectorAll("input[type=checkbox]");
+				
+				for (var i = 0; i < inputs.length; i++) {
+					inputs[i].addEventListener("change", function(e) {
+						storage.setItem(e.target.name, e.target.checked == true ? "1" : "0");
+					}, true);
+				}
+				
+				for (var i = 0; i < inputs.length; i++) {
+					if (inputs[i].type == "checkbox") {
+						inputs[i].checked = (storage.getItem(inputs[i].name) == "1" ? true : false);
+					}
+				}
+				
+				// add event listeners for the help icons
+				var helps = document.querySelectorAll("a[class=click4help]");
+				for (var i = 0; i < helps.length; i++) {
+					helps[i].addEventListener("click", function(e) {
+						var helper = document.getElementById("help");
+						var bod = helper.childNodes[0].childNodes[1];
+						bod.innerHTML = helpitems[e.target.dataset.helpitem];
+						helper.style.posTop = e.target.offsetTop + (helper.clientHeight/2);
+						helper.style.posLeft = e.target.offsetLeft + (helper.clientWidth/2);
+						helper.style.display = "block";
+					}, false);
+				}
+			}, false);
+		</script>
+	</body>
+</html>

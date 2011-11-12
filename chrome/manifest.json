@@ -1,0 +1,17 @@
+{
+	"name": "Jul Forever",
+	"version": "0",
+	"description": "Blah blah blah horseshit",
+	"browser_action": {
+		"default_icon": "emot-smug.png",
+		"default_title": "jul",
+		"popup": "popup.html"
+	},
+	"background_page": "POSTINGFOREVER.html",
+	"permissions": [
+		"cookies",
+		"notifications",
+		"tabs",
+		"http://jul.rustedlogic.net/*"
+	]
+}

@@ -1,0 +1,16 @@
+﻿<widget xmlns="http://www.w3.org/ns/widgets">
+	<name>Jul + Some more</name>
+	<description>Latest posts IN YOUR FACE! IN YOUR TOOLBAR!!!</description>
+	<author>hydrapheetz</author>
+	<feature name="opera:share-cookies" required="true" />
+	<access origin="http://rustedlogic.net" subdomains="true" />
+	<content src="index.html" />
+	<icon src="icons/superd.png" />
+	<preference name="xkeepers_goggles" value="1" readonly="false" />
+	<preference name="firstRun" value="1" readonly="false" />
+	<preference name="latestposts_highid" value="0" readonly="false"  />
+	<preference name="latestposts" value="" readonly="false" />
+	<preference name="latestposts_newcounter" value="0" readonly="false" />
+	<preference name="highlight_threads" value="0" readonly="false" />
+	<preference name="compact_mode" value="0" readonly="false" />
+</widget>
